@@ -1,0 +1,145 @@
+.start-order-page {
+  background: linear-gradient(135deg, #0e0e0e 0%, #1a1a2e 100%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  color: #f0f0f0;
+  padding: 20px;
+}
+
+.start-order-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.start-order-card {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 16px;
+  padding: 60px 40px;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.start-order-card h1 {
+  font-size: 32px;
+  margin-bottom: 20px;
+  color: #c8f564;
+  font-weight: 700;
+}
+
+.loading-text {
+  font-size: 18px;
+  margin-bottom: 30px;
+  color: #ccc;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  margin: 30px auto;
+  border: 4px solid #333;
+  border-top-color: #c8f564;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-message {
+  background: rgba(200, 100, 100, 0.15);
+  border: 1px solid #cc6666;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  color: #ff9999;
+}
+
+.error-message p {
+  margin: 0 0 15px 0;
+  font-size: 16px;
+}
+
+.retry-btn {
+  padding: 12px 24px;
+  background: #c8f564;
+  color: #0e0e0e;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.retry-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(200, 245, 100, 0.3);
+}
+
+.success-message {
+  background: rgba(200, 245, 100, 0.15);
+  border: 1px solid #c8f564;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  color: #c8f564;
+}
+
+.info-box {
+  background: #0e0e0e;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 25px;
+  margin-top: 30px;
+  text-align: left;
+}
+
+.info-box p {
+  margin: 0 0 15px 0;
+  font-weight: 600;
+  color: #c8f564;
+}
+
+.info-box ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-box li {
+  padding: 8px 0;
+  color: #ccc;
+  font-size: 14px;
+}
+
+.info-box li:before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  background: #c8f564;
+  border-radius: 50%;
+  margin-right: 10px;
+  margin-bottom: 2px;
+}
+
+@media (max-width: 768px) {
+  .start-order-card {
+    padding: 40px 25px;
+  }
+
+  .start-order-card h1 {
+    font-size: 24px;
+  }
+
+  .info-box {
+    padding: 20px;
+  }
+}
