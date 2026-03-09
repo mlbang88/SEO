@@ -24,3 +24,13 @@ dist-ssr
 *.sw?
 
 .vercel
+
+# Old N8N workflow files (contain hardcoded API keys - replaced by *_FIXED.js versions)
+N8N_WORKFLOW_1_GENERATION.js
+N8N_WORKFLOW_2_REVISION.js
+
+# Internal claude-flow / swarm state files
+.claude-flow/
+.swarm/
+0
+test_webhooks.html

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"C:\\\\Users\\\\Maxime Labonde\\\\Documents\\\\Mes projets react\\\\SEO\\\\docs\\\\FULL-AUDIT-REPORT.md\":*)",
+      "Bash(powershell:*)",
+      "Bash(gh repo list mlbang88 --limit 20)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "claude-flow"
+  ]
+}
