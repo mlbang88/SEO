@@ -47,6 +47,9 @@ const APP_URL             = 'https://getseobolt.com';
 const DATAFORSEO_LOGIN    = $env.DATAFORSEO_LOGIN;
 const DATAFORSEO_PASSWORD = $env.DATAFORSEO_PASSWORD;
 
+// Diagnostic: confirm env vars are loaded
+console.log('[ENV CHECK] CLAUDE_API_KEY:', !!CLAUDE_API_KEY, '| DATAFORSEO_LOGIN:', !!DATAFORSEO_LOGIN, '| DATAFORSEO_PASSWORD:', !!DATAFORSEO_PASSWORD);
+
 // ===== CONSTANTES FIREBASE - VERSION SIMPLIFIÉE =====
 const FIREBASE_PROJECT = 'seo-description-fiverr';
 const FIREBASE_DB_URL = 'https://firestore.googleapis.com/v1/projects/seo-description-fiverr/databases/(default)/documents';
@@ -90,6 +93,32 @@ const fetchDataForSEOKeywords = async (seedKeyword, language) => {
   }
 };
 
+// ===== FONCTION : TRADUCTION DES SEEDS VIA CLAUDE =====
+const translateSeeds = async (seeds, targetLanguage) => {
+  try {
+    const resp = await this.helpers.httpRequest({
+      method: 'POST',
+      url: 'https://api.anthropic.com/v1/messages',
+      headers: { 'x-api-key': CLAUDE_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+      body: {
+        model: 'claude-haiku-4-5',
+        max_tokens: 256,
+        messages: [{
+          role: 'user',
+          content: `Translate each of the following search keywords/phrases to ${targetLanguage}. Keep them short and natural as search queries (not full sentences). Respond ONLY with a JSON array of strings in the same order, no explanation.\n\nKeywords: ${JSON.stringify(seeds)}`,
+        }],
+      },
+      json: true,
+    });
+    const raw = resp.content[0].text;
+    const match = raw.match(/\[[\s\S]*\]/);
+    return match ? JSON.parse(match[0]) : seeds;
+  } catch (err) {
+    console.log('translateSeeds error (non-blocking):', err.message);
+    return seeds;
+  }
+};
+
 // ===== FONCTION : DATAFORSEO PEOPLE ALSO ASK (via keyword_ideas questions) =====
 const fetchPAA = async (seedKeyword, language) => {
   try {
@@ -118,6 +147,31 @@ const fetchPAA = async (seedKeyword, language) => {
   }
 };
 
+// ===== FALLBACK : VOLUMES ESTIMÉS PAR CLAUDE (si DataForSEO indisponible) =====
+const fetchClaudeKeywordFallback = async (productName, features, language) => {
+  try {
+    const resp = await this.helpers.httpRequest({
+      method: 'POST',
+      url: 'https://api.anthropic.com/v1/messages',
+      headers: { 'x-api-key': CLAUDE_API_KEY, 'anthropic-version': '2023-06-01', 'content-type': 'application/json' },
+      body: {
+        model: 'claude-haiku-4-5',
+        max_tokens: 512,
+        messages: [{
+          role: 'user',
+          content: `You are an SEO expert. Generate 8 relevant search keywords in ${language} for the product below, with realistic estimated monthly Google search volumes.\n\nProduct: ${productName}\nFeatures: ${features}\n\nRules:\n- Keywords must be in ${language}\n- Volumes must be realistic integers (between 100 and 50000)\n- Sort by volume descending\n- Mix head terms and long-tail queries\n- Respond ONLY with a valid JSON array, no explanation:\n[{"keyword": "...", "volume": 1200}, ...]`,
+        }],
+      },
+      json: true,
+    });
+    const raw = resp.content[0].text;
+    const match = raw.match(/\[[\s\S]*\]/);
+    return match ? JSON.parse(match[0]) : [];
+  } catch (err) {
+    return [];
+  }
+};
+
 const generateDescriptions = async () => {
   const results = [];
   
@@ -126,15 +180,53 @@ const generateDescriptions = async () => {
     const lang = p.langue || 'English';
 
     // ===== DATAFORSEO KEYWORD RESEARCH + PAA =====
-    // Seed DataForSEO : globalCategory > nom sans marque > nom produit
     const nomSansMarque = brand ? p.nom_produit.replace(new RegExp(brand, 'gi'), '').trim() : p.nom_produit;
     const dfseSeed = globalCategory || nomSansMarque || p.nom_produit;
-    const [dfsKeywordsData, dfsPAA] = await Promise.all([
-      fetchDataForSEOKeywords(dfseSeed, lang),
-      fetchPAA(dfseSeed, lang),
+
+    // Extract up to 2 feature seeds from caracteristiques for richer keyword coverage
+    const featureSeeds = (p.caracteristiques || '')
+      .split(/[,\n;]/)
+      .map(f => f.trim())
+      .filter(f => f.length > 3 && f.length < 80)
+      .slice(0, 2);
+
+    // Translate seeds to target language so DataForSEO returns local-market keywords
+    const allSeedsRaw = [dfseSeed, ...featureSeeds];
+    const allSeedsTranslated = await translateSeeds(allSeedsRaw, lang);
+    const [mainSeedTranslated, ...featureSeedsTranslated] = allSeedsTranslated;
+
+    // Run all keyword queries in parallel: main seed + feature seeds + PAA
+    const [allKwResults, dfsPAA] = await Promise.all([
+      Promise.all([
+        fetchDataForSEOKeywords(mainSeedTranslated, lang),
+        ...featureSeedsTranslated.map(seed => fetchDataForSEOKeywords(seed, lang)),
+      ]),
+      fetchPAA(mainSeedTranslated, lang),
     ]);
-    const dfsKeywords = dfsKeywordsData.map(k => k.keyword);
-    console.log(`DataForSEO keywords for "${p.nom_produit}" (seed: "${dfseSeed}"):`, dfsKeywordsData);
+
+    // Merge results, deduplicate by keyword (keep highest volume), sort descending
+    const kwMap = new Map();
+    for (const kwArray of allKwResults) {
+      for (const kw of kwArray) {
+        if (!kwMap.has(kw.keyword) || kwMap.get(kw.keyword).volume < kw.volume) {
+          kwMap.set(kw.keyword, kw);
+        }
+      }
+    }
+    let dfsKeywordsData = [...kwMap.values()]
+      .sort((a, b) => b.volume - a.volume)
+      .slice(0, 10);
+    let dfsKeywords = dfsKeywordsData.map(k => k.keyword);
+    // Fallback : si DataForSEO indisponible, estimer les volumes via Claude
+    if (dfsKeywordsData.length === 0) {
+      const fallback = await fetchClaudeKeywordFallback(p.nom_produit, p.caracteristiques || '', lang);
+      if (fallback.length > 0) {
+        dfsKeywordsData = fallback;
+        dfsKeywords = dfsKeywordsData.map(k => k.keyword);
+      }
+    }
+    console.log(`DataForSEO seeds (translated to ${lang}): "${allSeedsTranslated.join('", "')}"`);
+    console.log(`DataForSEO keywords for "${p.nom_produit}":`, dfsKeywordsData);
     console.log(`DataForSEO PAA for "${p.nom_produit}":`, dfsPAA);
 
     const langInstruction = lang === 'French'
@@ -170,11 +262,39 @@ IMPORTANT: Do NOT mention competitors inside titre_seo, meta_description, descri
 ${altText && p.image_url ? `
 ALT TEXT (MANDATORY): Generate an SEO-optimized image alt text in ${lang} for the product image. Put it in the "image_alt" field. Max 125 characters, descriptive and keyword-rich.` : ''}
 ${dfsKeywords.length > 0
-  ? `\nThese keywords have real search volume data — use them as semantic inspiration. Never repeat any keyword more than once. Prioritize natural readability over keyword density:\n${dfsKeywordsData.map((k, idx) => `${idx + 1}. ${k.keyword} (${k.volume.toLocaleString()}/mo)`).join('\n')}`
+  ? `\nSEO KEYWORDS (real search volume in ${lang} market):\n${dfsKeywordsData.map((k, idx) => `${idx + 1}. ${k.keyword} (${k.volume.toLocaleString()}/mo)`).join('\n')}\n\nKEYWORD INTEGRATION RULES (mandatory):\n- Use at least 6 of these 10 keywords across the content\n- Vary their form naturally: plurals, synonyms, inverted word order — never paste them verbatim if it sounds forced\n- Spread them across different fields: titre_seo, description_courte, description_longue, bullet_points\n- Never use the same keyword twice\n- Integration must feel like a real copywriter wrote it, not keyword stuffing`
   : ''}
 ${dfsPAA.length > 0
-  ? `\nPEOPLE ALSO ASK – Real Google questions buyers ask. Use them to inspire your descriptions and bullet points:\n${dfsPAA.map((q, idx) => `${idx + 1}. ${q}`).join('\n')}`
+  ? `\nPEOPLE ALSO ASK – Real Google questions buyers ask in ${lang}. Let them shape your angle and bullet points:\n${dfsPAA.map((q, idx) => `${idx + 1}. ${q}`).join('\n')}`
   : ''}
+
+WRITING STYLE – MANDATORY:
+${lang === 'French' ? `Écris comme un vrai rédacteur web, pas comme une IA. Règles strictes :
+- MOTS INTERDITS : mettant en valeur, soulignant, favorisant, cultivant, vibrant, témoignage vivant, incontournable, révolutionnaire, niché, se targue de, fluide, rehausser, décupler, tirer parti de, plonger dans, subtilités, souligne, reflète les tendances, haut de gamme (comme remplissage vide), innovant (sans détail), performant (sans détail), sur mesure (comme filler), à la pointe de la technologie, votre partenaire idéal, bien-être (utilisé vaguement)
+- Utilise "est / a / possède" — pas "se positionne comme / se veut / s'inscrit dans / dispose de / bénéficie de / jouit de"
+- Pas de participes tacked-on en fin de phrase : jamais "...offrant ainsi un confort optimal", "...permettant de...", "...contribuant à votre bien-être", "...garantissant une expérience unique", "...assurant un résultat optimal"
+- Pas de remplissage en trois parties : "alliant innovation, performance et excellence" ne dit rien — sois précis
+- Varie la longueur des phrases : alterne phrases courtes et longues
+- Bénéfices concrets, pas des affirmations vagues : "chauffe en 3 minutes" vaut mieux que "offre une chaleur thérapeutique optimale"
+- Pas de formules d'ouverture IA : "Dans un monde où...", "Au cœur de...", "Dans un contexte où..."
+- Pas de closing générique : "le choix idéal pour...", "pour une expérience optimale", "pour répondre à tous vos besoins", "le tout dans un design élégant"` 
+: lang === 'Spanish' ? `Escribe como un redactor real, no como una IA. Reglas estrictas:
+- PALABRAS PROHIBIDAS: destacando, mejorando, fomentando, vibrante, testimonio, fundamental, revolucionario, anidado, presume de, fluido, elevar, aprovechar, explorar en profundidad, intrincado, subraya, refleja tendencias más amplias
+- Usa "es / tiene / hace" en lugar de "se posiciona como / se erige como / cuenta con / goza de"
+- Sin frases participiales al final: nunca "...garantizando una experiencia única", "...contribuyendo a tu bienestar"
+- Sin relleno en grupos de tres: "innovación, rendimiento y excelencia" no dice nada — sé específico
+- Varía la longitud de las frases: mezcla frases cortas y largas
+- Beneficios concretos: "calienta en 3 minutos" es mejor que "ofrece un calor terapéutico óptimo"
+- Sin cierres genéricos: "la elección perfecta para...", "para una experiencia óptima"`
+: `Write like a real copywriter, not an AI. Specifically:
+- BANNED words: showcasing, highlighting, enhancing, fostering, vibrant, testament, pivotal, groundbreaking, nestled, boasts, seamless, elevate, unlock, leverage, delve, tapestry, interplay, intricate, crucial, underscores, reflects broader
+- Use "is/are/has" not "serves as / stands as / features / boasts"
+- No tacked-on -ing phrases: never end a sentence with "...ensuring comfort", "...reflecting quality", "...contributing to well-being"
+- No rule-of-three padding: "innovation, performance, and excellence" adds nothing — be specific
+- Vary sentence length: mix short punchy sentences with longer ones
+- Write concrete benefits, not vague claims: "heats up in 3 minutes" beats "offers therapeutic warmth"
+- No generic closing sentences like "the perfect choice for..." or "take your experience to the next level"`}
+- No bullet point headers with bold + colon pattern
 
 Respond ONLY with valid JSON, no markdown, no explanation:
 {
