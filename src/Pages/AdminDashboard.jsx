@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../styles/AdminDashboard.css';
 
-const ADMIN_PASSWORD = 'admin'; // In production, this should be hashed and verified server-side
+const ADMIN_PASSWORD = import.meta.env.VITE_ADMIN_PASSWORD || 'admin';
 
 export default function AdminDashboard() {
   const [isLoggedIn, setIsLoggedIn] = useState(localStorage.getItem('adminLoggedIn') === 'true');
@@ -39,10 +39,10 @@ export default function AdminDashboard() {
     try {
       // Fetch from Firebase Firestore to get order stats
       const FIREBASE_DB_URL = 'https://firestore.googleapis.com/v1/projects/seo-description-fiverr/databases/(default)/documents';
-      
+
       const response = await fetch(`${FIREBASE_DB_URL}/orders`);
       const data = await response.json();
-      
+
       if (data.documents) {
         const orders = data.documents.map(doc => ({
           id: doc.name.split('/').pop(),
@@ -80,7 +80,7 @@ export default function AdminDashboard() {
     ordersList.forEach(order => {
       const orderDate = new Date(order.createdAt);
       if (orderDate >= thisMonth) {
-        revenue += prices[order.package] || 49;
+        revenue += prices[order.package] || 0;
       }
 
       if (order.status === 'pending' || order.status === 'pending_review') {
@@ -239,7 +239,7 @@ export default function AdminDashboard() {
                       {order.products.length} product{order.products.length !== 1 ? 's' : ''}
                     </td>
                     <td className="status">
-                      <span 
+                      <span
                         className="status-badge"
                         style={{ borderColor: getStatusColor(order.status) }}
                       >

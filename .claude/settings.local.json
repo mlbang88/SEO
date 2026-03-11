@@ -3,7 +3,12 @@
     "allow": [
       "Bash(\"C:\\\\Users\\\\Maxime Labonde\\\\Documents\\\\Mes projets react\\\\SEO\\\\docs\\\\FULL-AUDIT-REPORT.md\":*)",
       "Bash(powershell:*)",
-      "Bash(gh repo list mlbang88 --limit 20)"
+      "Bash(gh repo list mlbang88 --limit 20)",
+      "Bash(npm run build)",
+      "Bash(node -e \"const fs=require\\(''fs''\\); const lines=fs.readFileSync\\(''src/Pages/HomePage.jsx'',''utf8''\\).split\\(''\\\\n''\\); console.log\\(JSON.stringify\\(lines.slice\\(213,217\\)\\)\\)\")",
+      "mcp__573da31b-8c15-4bf4-a260-6abd956a234d__web_fetch_vercel_url",
+      "mcp__573da31b-8c15-4bf4-a260-6abd956a234d__get_access_to_vercel_url",
+      "mcp__Claude_Preview__preview_start"
     ]
   },
   "enableAllProjectMcpServers": true,

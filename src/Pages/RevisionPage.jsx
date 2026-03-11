@@ -8,9 +8,9 @@ const REVISION_WEBHOOK_URL_DIRECT = "https://primary-production-94f2.up.railway.
 const RevisionPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  
+
   const orderId = searchParams.get('orderId') || searchParams.get('revision');
-  
+
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -31,7 +31,7 @@ const RevisionPage = () => {
       try {
         const firebaseUrl = `https://firestore.googleapis.com/v1/projects/seo-description-fiverr/databases/(default)/documents/orders/${orderId}`;
         const response = await fetch(firebaseUrl);
-        
+
         if (!response.ok) {
           throw new Error(`Order not found (${response.status})`);
         }
@@ -75,8 +75,8 @@ const RevisionPage = () => {
 
     try {
       // Choose webhook based on source
-      const webhookUrl = order?.source === 'direct' 
-        ? REVISION_WEBHOOK_URL_DIRECT 
+      const webhookUrl = order?.source === 'direct'
+        ? REVISION_WEBHOOK_URL_DIRECT
         : REVISION_WEBHOOK_URL_FIVERR;
 
       const payload = {
@@ -114,7 +114,46 @@ const RevisionPage = () => {
 
   return (
     <div className="revision-container">
-      <div className="revision-header" style={{ background: `linear-gradient(135deg, ${color}, ${color}dd)` }}>
+      <style>{`
+        .revision-container { max-width: 900px; margin: 0 auto; padding: 40px 20px; font-family: 'DM Sans', sans-serif; }
+        .revision-header { background: linear-gradient(135deg, ${color}, ${color}dd); color: white; padding: 30px; border-radius: 12px; margin-bottom: 30px; }
+        .revision-header h1 { margin: 0 0 10px; font-size: 28px; }
+        .revision-header p { margin: 5px 0; opacity: 0.9; }
+        .order-info { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
+        .info-item { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 8px; }
+        .info-label { font-size: 12px; opacity: 0.8; text-transform: uppercase; margin-bottom: 4px; }
+        .info-value { font-weight: 600; }
+        .error { color: #ff6b6b; padding: 15px; background: #ffe0e0; border-radius: 8px; }
+        .revision-content { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 40px; }
+        .descriptions-list { }
+        .product-card { background: #f8f9fa; border: 1px solid #e0e0e0; border-left: 4px solid ${color}; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        .product-number { display: inline-block; background: ${color}; color: white; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; font-weight: 700; margin-right: 10px; font-size: 14px; }
+        .product-name { font-size: 18px; font-weight: 600; margin: 10px 0; color: #1a1a1a; }
+        .description-item { margin-bottom: 15px; }
+        .desc-label { font-size: 11px; color: ${color}; text-transform: uppercase; font-weight: 600; margin-bottom: 4px; }
+        .desc-value { color: #555; line-height: 1.6; font-size: 14px; }
+        .keywords-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .keyword-tag { background: #ddd; color: #333; padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+        .kw-vol { color: #e07b00; font-weight: 600; font-size: 11px; }
+        .bullet-list { margin-left: 20px; margin-top: 8px; }
+        .bullet-list li { margin-bottom: 6px; color: #555; }
+        .revision-form { background: #f8f9fa; padding: 20px; border-radius: 8px; }
+        .form-section { margin-bottom: 30px; }
+        .form-section h3 { margin: 0 0 15px; color: #1a1a1a; font-size: 16px; }
+        .action-buttons { display: flex; gap: 15px; margin-bottom: 20px; }
+        .action-btn { flex: 1; padding: 12px; border: 2px solid #e0e0e0; background: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .action-btn.active { background: ${color}; color: white; border-color: ${color}; }
+        .comment-field { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; resize: vertical; min-height: 80px; }
+        .product-comment { margin-bottom: 20px; }
+        .product-comment label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #333; }
+        .product-comment textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; min-height: 70px; resize: vertical; }
+        .submit-button { width: 100%; padding: 14px; background: ${color}; color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 16px; cursor: pointer; transition: opacity 0.2s; }
+        .submit-button:hover { opacity: 0.9; }
+        .submit-button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .revisions-left { font-size: 12px; color: #999; margin-top: 10px; }
+      `}</style>
+
+      <div className="revision-header">
         <h1>👁️ Review Order #{order.fiverr_order || orderId.slice(0, 8)}</h1>
         <div className="order-info">
           <div className="info-item">
@@ -140,43 +179,43 @@ const RevisionPage = () => {
         <div className="descriptions-list">
           <h2 style={{ marginTop: 0, marginBottom: 20 }}>Generated Descriptions</h2>
           {order.results.map((product, idx) => (
-            <div key={idx} className="product-card" style={{ borderLeftColor: color }}>
+            <div key={idx} className="product-card">
               <div>
-                <span className="product-number" style={{ backgroundColor: color }}>{product.product_number || idx + 1}</span>
+                <span className="product-number">{product.product_number || idx + 1}</span>
                 <span className="product-name">{product.nom_produit}</span>
               </div>
 
               {product.titre_seo && (
                 <div className="description-item">
-                  <div className="desc-label" style={{ color: color }}>SEO Title</div>
+                  <div className="desc-label">SEO Title</div>
                   <div className="desc-value">{product.titre_seo}</div>
                 </div>
               )}
 
               {product.meta_description && (
                 <div className="description-item">
-                  <div className="desc-label" style={{ color: color }}>Meta Description</div>
+                  <div className="desc-label">Meta Description</div>
                   <div className="desc-value">{product.meta_description}</div>
                 </div>
               )}
 
               {product.description_courte && (
                 <div className="description-item">
-                  <div className="desc-label" style={{ color: color }}>Short Description</div>
+                  <div className="desc-label">Short Description</div>
                   <div className="desc-value">{product.description_courte}</div>
                 </div>
               )}
 
               {product.description_longue && (
                 <div className="description-item">
-                  <div className="desc-label" style={{ color: color }}>Long Description</div>
+                  <div className="desc-label">Long Description</div>
                   <div className="desc-value">{product.description_longue}</div>
                 </div>
               )}
 
               {product.bullet_points && product.bullet_points.length > 0 && (
                 <div className="description-item">
-                  <div className="desc-label" style={{ color: color }}>Bullet Points</div>
+                  <div className="desc-label">Bullet Points</div>
                   <ul className="bullet-list">
                     {product.bullet_points.map((bp, i) => (
                       <li key={i}>{bp}</li>
@@ -194,7 +233,7 @@ const RevisionPage = () => {
                 const fmtVol = v => v >= 1000 ? (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(v);
                 return (
                   <div className="description-item">
-                    <div className="desc-label" style={{ color: color }}>Keywords</div>
+                    <div className="desc-label">Keywords</div>
                     <div className="keywords-list">
                       {kws.map((kw, i) => (
                         <span key={i} className="keyword-tag">
@@ -211,7 +250,7 @@ const RevisionPage = () => {
 
               {product.analyse_concurrents && (
                 <div className="description-item">
-                  <div className="desc-label" style={{ color: color }}>🔍 Competitor Analysis</div>
+                  <div className="desc-label">🔍 Competitor Analysis</div>
                   <div className="desc-value" style={{ fontStyle: 'italic', color: '#777', background: '#f0f4ff', padding: '10px', borderRadius: '6px' }}>{product.analyse_concurrents}</div>
                 </div>
               )}
@@ -227,7 +266,6 @@ const RevisionPage = () => {
                 <button
                   type="button"
                   className={`action-btn ${action === 'approve' ? 'active' : ''}`}
-                  style={action === 'approve' ? { backgroundColor: color, borderColor: color } : {}}
                   onClick={() => setAction('approve')}
                 >
                   ✅ Approve
@@ -235,7 +273,6 @@ const RevisionPage = () => {
                 <button
                   type="button"
                   className={`action-btn ${action === 'revise' ? 'active' : ''}`}
-                  style={action === 'revise' ? { backgroundColor: color, borderColor: color } : {}}
                   onClick={() => setAction('revise')}
                   disabled={order.revisionsLeft <= 0}
                 >
@@ -272,7 +309,7 @@ const RevisionPage = () => {
               </>
             )}
 
-            <button type="submit" className="submit-button" disabled={submitting} style={{ backgroundColor: color }}>
+            <button type="submit" className="submit-button" disabled={submitting}>
               {submitting ? '⏳ Processing...' : (action === 'approve' ? '✅ Approve & Get Files' : '🔄 Request Revision')}
             </button>
 

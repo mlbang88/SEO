@@ -379,6 +379,16 @@ Client feedback:
 ${globalComment ? `General: ${globalComment}` : ''}
 ${productComment ? `For this product: ${productComment}` : ''}
 
+WRITING STYLE – MANDATORY:
+${lang === 'French' ? `Écris comme un vrai rédacteur web, pas comme une IA. Règles strictes :
+- MOTS INTERDITS : mettant en valeur, soulignant, favorisant, cultivant, vibrant, témoignage vivant, incontournable, révolutionnaire, se targue de, rehausser, décupler, tirer parti de, à la pointe de la technologie, votre partenaire idéal, bien-être (vague)
+- Utilise "est / a / possède" — pas "se positionne comme / s'inscrit dans / dispose de / bénéficie de"
+- Pas de participes tacked-on : jamais "...offrant ainsi", "...contribuant à votre bien-être", "...garantissant une expérience unique"
+- Bénéfices concrets : "chauffe en 3 minutes" vaut mieux que "offre une chaleur thérapeutique optimale"
+- Varie la longueur des phrases. Pas de closing générique : "le choix idéal pour...", "pour une expérience optimale"`
+: lang === 'Spanish' ? `Escribe como un redactor real. PALABRAS PROHIBIDAS: destacando, mejorando, fomentando, vibrante, revolucionario, presume de, garantizando una experiencia única. Usa "es/tiene" no "se posiciona como/cuenta con". Beneficios concretos, no afirmaciones vagas.`
+: `Write like a real copywriter. BANNED: showcasing, highlighting, enhancing, fostering, vibrant, testament, pivotal, groundbreaking, boasts, seamless, elevate. Use "is/are/has" not "serves as/stands as/features". No tacked-on -ing phrases. Concrete benefits, not vague claims.`}
+
 Rewrite ALL elements in ${lang}. Respond ONLY with valid JSON:
 {
   "titre_seo": "...", "meta_description": "...", "description_courte": "...", "description_longue": "...",

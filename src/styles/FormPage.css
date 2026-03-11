@@ -1,6 +1,6 @@
 .form-page {
-  background: #0e0e0e;
-  color: #f0f0f0;
+  background: #f8f9fa;
+  color: #111827;
   min-height: 100vh;
   font-family: 'DM Sans', sans-serif;
 }
@@ -9,20 +9,21 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #1a1a1a;
+  background: #ffffff;
   padding: 20px 40px;
-  border-bottom: 1px solid #333;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .form-navbar h1 {
   font-size: 24px;
   margin: 0;
+  color: #111827;
 }
 
 .back-btn {
   background: none;
   border: none;
-  color: #c8f564;
+  color: #6b7280;
   cursor: pointer;
   font-size: 18px;
   padding: 10px;
@@ -31,7 +32,8 @@
 }
 
 .back-btn:hover {
-  background: #2a2a2a;
+  background: #f3f4f6;
+  color: #111827;
 }
 
 .form-container {
@@ -41,11 +43,12 @@
 }
 
 .form-step {
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 40px;
   animation: slideIn 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
 }
 
 @keyframes slideIn {
@@ -62,7 +65,7 @@
 .form-step h2 {
   font-size: 24px;
   margin-bottom: 25px;
-  color: #f0f0f0;
+  color: #111827;
 }
 
 /* Packages Grid */
@@ -74,38 +77,41 @@
 }
 
 .package-option {
-  border: 2px solid #333;
+  border: 2px solid #e5e7eb;
   border-radius: 10px;
   padding: 25px;
   cursor: pointer;
   transition: all 0.3s;
-  background: #0e0e0e;
+  background: #ffffff;
 }
 
 .package-option:hover {
   transform: translateY(-5px);
   border-color: currentColor;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
 
 .package-option.active {
-  background: rgba(200, 245, 100, 0.1);
+  background: rgba(37, 99, 235, 0.04);
   border-width: 3px;
 }
 
 .package-option h3 {
   margin: 0 0 15px 0;
   font-size: 20px;
+  color: #111827;
 }
 
 .package-option p {
   margin: 8px 0;
-  color: #ccc;
+  color: #6b7280;
 }
 
 .package-option .price {
   font-size: 24px;
   font-weight: 600;
   margin: 10px 0;
+  color: #111827;
 }
 
 /* Platforms */
@@ -121,8 +127,8 @@
   align-items: center;
   gap: 10px;
   padding: 15px;
-  background: #0e0e0e;
-  border: 1px solid #333;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s;
@@ -136,11 +142,12 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   min-width: 0;
+  color: #374151;
 }
 
 .platform-checkbox:hover {
-  border-color: #c8f564;
-  background: rgba(200, 245, 100, 0.05);
+  border-color: #2563eb;
+  background: rgba(37, 99, 235, 0.04);
 }
 
 .platform-checkbox input {
@@ -167,16 +174,17 @@
   font-weight: 500;
   font-size: 14px;
   text-transform: uppercase;
-  color: #aaa;
+  color: #6b7280;
+  letter-spacing: 0.04em;
 }
 
 .form-group input,
 .form-group select {
   padding: 12px;
-  background: #0e0e0e;
-  border: 1px solid #333;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
   border-radius: 6px;
-  color: #f0f0f0;
+  color: #111827;
   font-size: 16px;
   font-family: 'DM Sans', sans-serif;
 }
@@ -184,8 +192,8 @@
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #c8f564;
-  box-shadow: 0 0 0 3px rgba(200, 245, 100, 0.1);
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 /* Upload Section */
@@ -198,10 +206,10 @@
 .upload-btn,
 .template-btn {
   padding: 12px 20px;
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
   border-radius: 6px;
-  color: #f0f0f0;
+  color: #374151;
   cursor: pointer;
   transition: all 0.3s;
   font-size: 14px;
@@ -210,8 +218,9 @@
 
 .upload-btn:hover,
 .template-btn:hover {
-  border-color: #c8f564;
-  color: #c8f564;
+  border-color: #2563eb;
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.04);
 }
 
 /* Products List */
@@ -222,8 +231,8 @@
 }
 
 .product-card {
-  background: #0e0e0e;
-  border: 1px solid #333;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
   border-radius: 8px;
   padding: 20px;
   margin-bottom: 15px;
@@ -235,10 +244,10 @@
 .product-card input,
 .product-card textarea {
   padding: 12px;
-  background: #1a1a1a;
-  border: 1px solid #333;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
   border-radius: 6px;
-  color: #f0f0f0;
+  color: #111827;
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
 }
@@ -246,7 +255,7 @@
 .product-card input:focus,
 .product-card textarea:focus {
   outline: none;
-  border-color: #c8f564;
+  border-color: #2563eb;
 }
 
 .product-card textarea {
@@ -257,16 +266,17 @@
 .product-card .remove-btn {
   grid-column: 1 / -1;
   padding: 10px;
-  background: #8b0000;
+  background: #fee2e2;
   border: none;
   border-radius: 6px;
-  color: #fff;
+  color: #dc2626;
   cursor: pointer;
   transition: all 0.3s;
+  font-weight: 500;
 }
 
 .product-card .remove-btn:hover {
-  background: #a00000;
+  background: #fecaca;
 }
 
 /* Buttons */
@@ -274,10 +284,10 @@
   display: block;
   width: 100%;
   padding: 15px;
-  background: #2a2a2a;
-  border: 2px dashed #c8f564;
+  background: #f9fafb;
+  border: 2px dashed #d1d5db;
   border-radius: 8px;
-  color: #c8f564;
+  color: #6b7280;
   cursor: pointer;
   font-weight: 600;
   font-size: 16px;
@@ -286,7 +296,9 @@
 }
 
 .add-product-btn:hover {
-  background: rgba(200, 245, 100, 0.1);
+  border-color: #2563eb;
+  color: #2563eb;
+  background: rgba(37, 99, 235, 0.04);
 }
 
 .continue-btn,
@@ -294,8 +306,8 @@
   display: block;
   width: 100%;
   padding: 15px;
-  background: #c8f564;
-  color: #0e0e0e;
+  background: #111827;
+  color: #ffffff;
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -308,7 +320,8 @@
 .continue-btn:hover,
 .submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(200, 245, 100, 0.3);
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.15);
+  background: #1f2937;
 }
 
 .form-buttons {
@@ -320,26 +333,26 @@
 .back-step-btn {
   flex: 1;
   padding: 15px;
-  background: #2a2a2a;
-  border: 1px solid #444;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
   border-radius: 8px;
-  color: #f0f0f0;
+  color: #374151;
   cursor: pointer;
   font-weight: 600;
   transition: all 0.3s;
 }
 
 .back-step-btn:hover {
-  border-color: #c8f564;
-  color: #c8f564;
+  border-color: #111827;
+  color: #111827;
 }
 
 .status-message {
   padding: 15px;
-  background: rgba(200, 245, 100, 0.1);
-  border: 1px solid #c8f564;
+  background: rgba(37, 99, 235, 0.06);
+  border: 1px solid #bfdbfe;
   border-radius: 6px;
-  color: #c8f564;
+  color: #1d4ed8;
   margin-bottom: 20px;
   text-align: center;
 }
@@ -376,20 +389,20 @@
   display: flex;
   align-items: flex-start;
   gap: 14px;
-  background: #111;
-  border: 1.5px solid #333;
+  background: #f9fafb;
+  border: 1.5px solid #e5e7eb;
   border-radius: 12px;
   padding: 16px 18px;
   cursor: pointer;
   transition: all .18s;
   user-select: none;
 }
-.addon-card:hover { background: #161616; }
+.addon-card:hover { background: #f3f4f6; border-color: #d1d5db; }
 .addon-check {
   width: 20px;
   height: 20px;
   border-radius: 5px;
-  border: 1.5px solid #555;
+  border: 1.5px solid #d1d5db;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -400,8 +413,8 @@
 
 /* ── Summary box ── */
 .summary-box {
-  background: #111;
-  border: 1px solid #252525;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
   border-radius: 12px;
   padding: 20px 24px;
 }
@@ -410,7 +423,7 @@
   justify-content: space-between;
   align-items: center;
   font-size: 14px;
-  color: #ccc;
+  color: #6b7280;
   padding: 6px 0;
 }
 
@@ -421,10 +434,10 @@
   align-items: center;
   padding: 14px 18px;
   cursor: pointer;
-  background: #161616;
+  background: #f3f4f6;
   border-radius: 10px 10px 0 0;
 }
 .product-card-body {
   padding: 18px;
-  border-top: 1px solid #222;
+  border-top: 1px solid #e5e7eb;
 }
