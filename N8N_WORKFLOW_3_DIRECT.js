@@ -143,9 +143,7 @@ const fetchClaudeKeywordFallback = async (productName, features, language) => {
 };
 
 const generateDescriptions = async () => {
-  const results = [];
-  for (let i = 0; i < prods.length; i++) {
-    const p = prods[i];
+  const results = await Promise.all(prods.map(async (p, i) => {
     const lang = p.langue || 'English';
     // Seed DataForSEO : globalCategory > nom sans marque > nom produit
     const nomSansMarque = brand ? p.nom_produit.replace(new RegExp(brand, 'gi'), '').trim() : p.nom_produit;
@@ -303,7 +301,7 @@ Respond ONLY with valid JSON, no markdown, no explanation:
     const raw = response.content[0].text;
     const match = raw.match(/\{[\s\S]*\}/);
     const res = JSON.parse(match[0]);
-    results.push({
+    return {
       ...res,
       mots_cles_suggeres: dfsKeywords.length > 0 ? dfsKeywords : (res.mots_cles_suggeres || []),
       mots_cles_data: dfsKeywordsData.length > 0 ? dfsKeywordsData : [],
@@ -319,8 +317,8 @@ Respond ONLY with valid JSON, no markdown, no explanation:
       prix_barre:       p.prix_barre || '',
       sku:              p.sku || '',
       categorie_produit: p.categorie_produit || '',
-    });
-  }
+    };
+  }));
   return results;
 };
 

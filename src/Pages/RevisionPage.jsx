@@ -124,8 +124,7 @@ const RevisionPage = () => {
         .info-label { font-size: 12px; opacity: 0.8; text-transform: uppercase; margin-bottom: 4px; }
         .info-value { font-weight: 600; }
         .error { color: #ff6b6b; padding: 15px; background: #ffe0e0; border-radius: 8px; }
-        .revision-content { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; margin-bottom: 40px; }
-        .descriptions-list { }
+        .descriptions-list { margin-bottom: 30px; }
         .product-card { background: #f8f9fa; border: 1px solid #e0e0e0; border-left: 4px solid ${color}; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
         .product-number { display: inline-block; background: ${color}; color: white; width: 32px; height: 32px; border-radius: 50%; text-align: center; line-height: 32px; font-weight: 700; margin-right: 10px; font-size: 14px; }
         .product-name { font-size: 18px; font-weight: 600; margin: 10px 0; color: #1a1a1a; }
@@ -137,20 +136,23 @@ const RevisionPage = () => {
         .kw-vol { color: #e07b00; font-weight: 600; font-size: 11px; }
         .bullet-list { margin-left: 20px; margin-top: 8px; }
         .bullet-list li { margin-bottom: 6px; color: #555; }
-        .revision-form { background: #f8f9fa; padding: 20px; border-radius: 8px; }
-        .form-section { margin-bottom: 30px; }
-        .form-section h3 { margin: 0 0 15px; color: #1a1a1a; font-size: 16px; }
-        .action-buttons { display: flex; gap: 15px; margin-bottom: 20px; }
-        .action-btn { flex: 1; padding: 12px; border: 2px solid #e0e0e0; background: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
-        .action-btn.active { background: ${color}; color: white; border-color: ${color}; }
-        .comment-field { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; resize: vertical; min-height: 80px; }
-        .product-comment { margin-bottom: 20px; }
-        .product-comment label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 14px; color: #333; }
-        .product-comment textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; min-height: 70px; resize: vertical; }
-        .submit-button { width: 100%; padding: 14px; background: ${color}; color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 16px; cursor: pointer; transition: opacity 0.2s; }
+        .inline-comment { margin-top: 16px; padding-top: 16px; border-top: 1px dashed #ddd; }
+        .inline-comment label { display: block; font-weight: 600; margin-bottom: 8px; font-size: 13px; color: #555; }
+        .inline-comment textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; min-height: 70px; resize: vertical; box-sizing: border-box; }
+        .bottom-section { background: #f8f9fa; border: 1px solid #e0e0e0; border-radius: 12px; padding: 24px; }
+        .global-comment-section { margin-bottom: 20px; }
+        .global-comment-section h3 { margin: 0 0 10px; font-size: 15px; color: #333; }
+        .global-comment-section textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-family: inherit; resize: vertical; min-height: 80px; box-sizing: border-box; }
+        .bottom-buttons { display: flex; gap: 12px; }
+        .revise-toggle-btn { flex: 1; padding: 14px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 15px; transition: all 0.2s; color: #555; }
+        .revise-toggle-btn.active { background: #fff3cd; border-color: #f0a500; color: #a07000; }
+        .revise-toggle-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+        .cancel-btn { flex: 0.6; padding: 14px; border: 2px solid #ddd; background: white; border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 15px; transition: all 0.2s; color: #888; }
+        .cancel-btn:hover { border-color: #bbb; color: #555; }
+        .submit-button { flex: 2; padding: 14px; background: ${color}; color: white; border: none; border-radius: 8px; font-weight: 600; font-size: 15px; cursor: pointer; transition: opacity 0.2s; }
         .submit-button:hover { opacity: 0.9; }
         .submit-button:disabled { opacity: 0.6; cursor: not-allowed; }
-        .revisions-left { font-size: 12px; color: #999; margin-top: 10px; }
+        .revisions-left { font-size: 12px; color: #999; margin-top: 10px; text-align: center; }
       `}</style>
 
       <div className="revision-header">
@@ -175,152 +177,142 @@ const RevisionPage = () => {
         </div>
       </div>
 
-      <div className="revision-content">
-        <div className="descriptions-list">
-          <h2 style={{ marginTop: 0, marginBottom: 20 }}>Generated Descriptions</h2>
-          {order.results.map((product, idx) => (
-            <div key={idx} className="product-card">
-              <div>
-                <span className="product-number">{product.product_number || idx + 1}</span>
-                <span className="product-name">{product.nom_produit}</span>
-              </div>
-
-              {product.titre_seo && (
-                <div className="description-item">
-                  <div className="desc-label">SEO Title</div>
-                  <div className="desc-value">{product.titre_seo}</div>
-                </div>
-              )}
-
-              {product.meta_description && (
-                <div className="description-item">
-                  <div className="desc-label">Meta Description</div>
-                  <div className="desc-value">{product.meta_description}</div>
-                </div>
-              )}
-
-              {product.description_courte && (
-                <div className="description-item">
-                  <div className="desc-label">Short Description</div>
-                  <div className="desc-value">{product.description_courte}</div>
-                </div>
-              )}
-
-              {product.description_longue && (
-                <div className="description-item">
-                  <div className="desc-label">Long Description</div>
-                  <div className="desc-value">{product.description_longue}</div>
-                </div>
-              )}
-
-              {product.bullet_points && product.bullet_points.length > 0 && (
-                <div className="description-item">
-                  <div className="desc-label">Bullet Points</div>
-                  <ul className="bullet-list">
-                    {product.bullet_points.map((bp, i) => (
-                      <li key={i}>{bp}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {(() => {
-                const hasDfsData = product.mots_cles_data?.length > 0;
-                const kws = hasDfsData
-                  ? product.mots_cles_data
-                  : (product.mots_cles_suggeres || []).map(k => ({ keyword: k, volume: null }));
-                if (!kws.length) return null;
-                const fmtVol = v => v >= 1000 ? (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(v);
-                return (
-                  <div className="description-item">
-                    <div className="desc-label">Keywords</div>
-                    <div className="keywords-list">
-                      {kws.map((kw, i) => (
-                        <span key={i} className="keyword-tag">
-                          {kw.keyword}
-                          {kw.volume != null && (
-                            <span className="kw-vol"> {fmtVol(kw.volume)}/mo</span>
-                          )}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                );
-              })()}
-
-              {product.analyse_concurrents && (
-                <div className="description-item">
-                  <div className="desc-label">🔍 Competitor Analysis</div>
-                  <div className="desc-value" style={{ fontStyle: 'italic', color: '#777', background: '#f0f4ff', padding: '10px', borderRadius: '6px' }}>{product.analyse_concurrents}</div>
-                </div>
-              )}
+      <div className="descriptions-list">
+        <h2 style={{ marginTop: 0, marginBottom: 20 }}>Generated Descriptions</h2>
+        {order.results.map((product, idx) => (
+          <div key={idx} className="product-card">
+            <div>
+              <span className="product-number">{product.product_number || idx + 1}</span>
+              <span className="product-name">{product.nom_produit}</span>
             </div>
-          ))}
-        </div>
 
-        <div className="revision-form">
-          <form onSubmit={handleSubmit}>
-            <div className="form-section">
-              <h3>Your Decision</h3>
-              <div className="action-buttons">
-                <button
-                  type="button"
-                  className={`action-btn ${action === 'approve' ? 'active' : ''}`}
-                  onClick={() => setAction('approve')}
-                >
-                  ✅ Approve
+            {product.titre_seo && (
+              <div className="description-item">
+                <div className="desc-label">SEO Title</div>
+                <div className="desc-value">{product.titre_seo}</div>
+              </div>
+            )}
+
+            {product.meta_description && (
+              <div className="description-item">
+                <div className="desc-label">Meta Description</div>
+                <div className="desc-value">{product.meta_description}</div>
+              </div>
+            )}
+
+            {product.description_courte && (
+              <div className="description-item">
+                <div className="desc-label">Short Description</div>
+                <div className="desc-value">{product.description_courte}</div>
+              </div>
+            )}
+
+            {product.description_longue && (
+              <div className="description-item">
+                <div className="desc-label">Long Description</div>
+                <div className="desc-value">{product.description_longue}</div>
+              </div>
+            )}
+
+            {product.bullet_points && product.bullet_points.length > 0 && (
+              <div className="description-item">
+                <div className="desc-label">Bullet Points</div>
+                <ul className="bullet-list">
+                  {product.bullet_points.map((bp, i) => (
+                    <li key={i}>{bp}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {(() => {
+              const hasDfsData = product.mots_cles_data?.length > 0;
+              const kws = hasDfsData
+                ? product.mots_cles_data
+                : (product.mots_cles_suggeres || []).map(k => ({ keyword: k, volume: null }));
+              if (!kws.length) return null;
+              const fmtVol = v => v >= 1000 ? (v / 1000).toFixed(1).replace(/\.0$/, '') + 'k' : String(v);
+              return (
+                <div className="description-item">
+                  <div className="desc-label">Keywords</div>
+                  <div className="keywords-list">
+                    {kws.map((kw, i) => (
+                      <span key={i} className="keyword-tag">
+                        {kw.keyword}
+                        {kw.volume != null && (
+                          <span className="kw-vol"> {fmtVol(kw.volume)}/mo</span>
+                        )}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+
+            {product.analyse_concurrents && (
+              <div className="description-item">
+                <div className="desc-label">🔍 Competitor Analysis</div>
+                <div className="desc-value" style={{ fontStyle: 'italic', color: '#777', background: '#f0f4ff', padding: '10px', borderRadius: '6px' }}>{product.analyse_concurrents}</div>
+              </div>
+            )}
+
+            {action === 'revise' && (
+              <div className="inline-comment">
+                <label>Comments for "{product.nom_produit}" (optional)</label>
+                <textarea
+                  placeholder={`What should be changed for "${product.nom_produit}"?`}
+                  value={productComments[idx] || ''}
+                  onChange={(e) => handleProductCommentChange(idx, e.target.value)}
+                />
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <form onSubmit={handleSubmit}>
+        <div className="bottom-section">
+          {action === 'revise' && (
+            <div className="global-comment-section">
+              <h3>General Comments (Optional)</h3>
+              <textarea
+                placeholder="Share any general feedback for all products..."
+                value={globalComment}
+                onChange={(e) => setGlobalComment(e.target.value)}
+              />
+            </div>
+          )}
+          <div className="bottom-buttons">
+            {action === 'revise' ? (
+              <>
+                <button type="button" className="cancel-btn" onClick={() => setAction('approve')}>
+                  ✕ Cancel
                 </button>
+                <button type="submit" className="submit-button" disabled={submitting}>
+                  {submitting ? '⏳ Processing...' : '🔄 Submit Revision'}
+                </button>
+              </>
+            ) : (
+              <>
                 <button
                   type="button"
-                  className={`action-btn ${action === 'revise' ? 'active' : ''}`}
+                  className="revise-toggle-btn"
                   onClick={() => setAction('revise')}
                   disabled={order.revisionsLeft <= 0}
                 >
-                  🔄 Revise
+                  ✏️ Revise
                 </button>
-              </div>
-            </div>
-
-            {action === 'revise' && (
-              <>
-                <div className="form-section">
-                  <h3>General Feedback (Optional)</h3>
-                  <textarea
-                    className="comment-field"
-                    placeholder="Share your general feedback for all products..."
-                    value={globalComment}
-                    onChange={(e) => setGlobalComment(e.target.value)}
-                  />
-                </div>
-
-                <div className="form-section">
-                  <h3>Product-Specific Feedback</h3>
-                  {order.results.map((product, idx) => (
-                    <div key={idx} className="product-comment">
-                      <label>{product.nom_produit}</label>
-                      <textarea
-                        placeholder={`Feedback for "${product.nom_produit}"...`}
-                        value={productComments[idx] || ''}
-                        onChange={(e) => handleProductCommentChange(idx, e.target.value)}
-                      />
-                    </div>
-                  ))}
-                </div>
+                <button type="submit" className="submit-button" disabled={submitting}>
+                  {submitting ? '⏳ Processing...' : '✅ Approve & Get Files'}
+                </button>
               </>
             )}
-
-            <button type="submit" className="submit-button" disabled={submitting}>
-              {submitting ? '⏳ Processing...' : (action === 'approve' ? '✅ Approve & Get Files' : '🔄 Request Revision')}
-            </button>
-
-            {order.revisionsLeft <= 0 && (
-              <div className="revisions-left">
-                ⚠️ No revisions left for this order
-              </div>
-            )}
-          </form>
+          </div>
+          {order.revisionsLeft <= 0 && (
+            <div className="revisions-left">⚠️ No revisions left for this order</div>
+          )}
         </div>
-      </div>
+      </form>
     </div>
   );
 };

@@ -1,10 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
 
 export default function HomePage() {
-  const navigate = useNavigate();
-
   return (
     <div className="home-page">
       {/* Navigation */}
@@ -20,18 +17,12 @@ export default function HomePage() {
             <a href="#faq">FAQ</a>
           </div>
           <div className="nav-actions">
-            <button
-              className="btn-primary"
-              onClick={() => navigate('/start')}
-            >
+            <a href="/start" className="btn-primary">
               Start Your Order
-            </button>
-            <button
-              className="btn-admin"
-              onClick={() => navigate('/admin')}
-            >
+            </a>
+            <a href="/admin" className="btn-admin">
               Admin
-            </button>
+            </a>
           </div>
         </div>
       </nav>
@@ -48,9 +39,9 @@ export default function HomePage() {
             AI-powered SEO copy for Shopify, Amazon & WooCommerce — optimized, formatted, and ready to import in under 24 hours.
           </p>
           <div className="hero-ctas">
-            <button className="btn-primary btn-large" onClick={() => navigate('/start')}>
+            <a href="/start" className="btn-primary btn-large">
               Get Started — $15
-            </button>
+            </a>
             <a href="#how-it-works" className="btn-outline btn-large">
               See How It Works
             </a>
@@ -185,7 +176,7 @@ export default function HomePage() {
                 <li>✓ 1 revision round</li>
                 <li>✓ 1 platform export</li>
               </ul>
-              <button className="btn-outline order-btn" onClick={() => navigate('/start')}>Order Now</button>
+              <a href="/start" className="btn-outline order-btn">Order Now</a>
             </div>
 
             <div className="pricing-card featured">
@@ -200,7 +191,7 @@ export default function HomePage() {
                 <li>✓ 2 revision rounds</li>
                 <li>✓ Multi-platform exports</li>
               </ul>
-              <button className="btn-primary order-btn" onClick={() => navigate('/start')}>Order Now</button>
+              <a href="/start" className="btn-primary order-btn">Order Now</a>
             </div>
 
             <div className="pricing-card">
@@ -215,7 +206,7 @@ export default function HomePage() {
                 <li>✓ SEO keyword research</li>
                 <li>✓ 3 revision rounds</li>
               </ul>
-              <button className="btn-outline order-btn" onClick={() => navigate('/start')}>Order Now</button>
+              <a href="/start" className="btn-outline order-btn">Order Now</a>
             </div>
           </div>
         </div>
@@ -251,9 +242,9 @@ export default function HomePage() {
         <div className="section-container">
           <h2>Ready to Get Started?</h2>
           <p>Join hundreds of sellers using SEO Bolt to drive more traffic and sales.</p>
-          <button className="btn-primary btn-large" onClick={() => navigate('/start')}>
+          <a href="/start" className="btn-primary btn-large">
             Start Your Order — $15
-          </button>
+          </a>
         </div>
       </section>
 

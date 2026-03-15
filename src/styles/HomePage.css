@@ -84,6 +84,10 @@ html, body {
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition: background 0.2s, transform 0.15s;
 }
 
@@ -124,6 +128,9 @@ html, body {
   border-radius: 6px;
   font-size: 13px;
   cursor: pointer;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
   transition: all 0.2s;
 }
 

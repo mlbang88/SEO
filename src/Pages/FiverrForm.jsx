@@ -93,6 +93,8 @@ export default function FiverrForm() {
         brand: formData.brand,
         globalCategory: formData.globalCategory,
         altText: formData.altText,
+        language: formData.language,
+        tone: formData.tone,
         products: formData.products.map(p => ({ ...p, ton: p.ton || formData.tone, langue: p.langue || formData.language })),
       };
       const res = await fetch(WEBHOOK_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });

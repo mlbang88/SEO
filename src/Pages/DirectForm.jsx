@@ -120,6 +120,8 @@ export default function DirectForm() {
         brand: formData.brand,
         globalCategory: formData.globalCategory,
         altText: formData.altText,
+        language: formData.language,
+        tone: formData.tone,
         products: formData.products.map(p => ({
           ...p, ton: p.ton || formData.tone, langue: p.langue || formData.language,
         })),

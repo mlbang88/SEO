@@ -332,15 +332,12 @@ if (action === 'revise') {
   const docData = await getFirestoreDocument(orderId);
   if (docData.revisionsLeft <= 0) throw new Error('No more revisions available');
 
-  const newResults = [];
-
-  for (let i = 0; i < docData.results.length; i++) {
-    const d = docData.results[i];
+  const newResults = await Promise.all(docData.results.map(async (d, i) => {
     let lang = d.langue || docData.products[i]?.langue || 'English';
     const productComment = productComments[i] || '';
     const hasComment = globalComment || productComment;
 
-    if (!hasComment) { newResults.push(d); continue; }
+    if (!hasComment) { return d; }
 
     const allComments = (globalComment + ' ' + productComment).toLowerCase();
     if (allComments.includes('french') || allComments.includes('français') || allComments.includes('francais')) lang = 'French';
@@ -408,7 +405,7 @@ Rewrite ALL elements in ${lang}. Respond ONLY with valid JSON:
     const raw = response.content[0].text;
     const match = raw.match(/\{[\s\S]*\}/);
     const res = JSON.parse(match[0]);
-    newResults.push({
+    return {
       ...res,
       nom_produit: d.nom_produit,
       product_number: d.product_number,
@@ -420,8 +417,8 @@ Rewrite ALL elements in ${lang}. Respond ONLY with valid JSON:
       prix: d.prix || '', prix_barre: d.prix_barre || '',
       sku: d.sku || '', image_url: d.image_url || '',
       categorie_produit: d.categorie_produit || '',
-    });
-  }
+    };
+  }));
 
   const newRevisionsLeft = docData.revisionsLeft - 1;
   await updateFirestoreDocument(orderId, { status: 'pending_review', revisionsLeft: newRevisionsLeft, results: newResults });
